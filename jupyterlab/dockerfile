@@ -1,0 +1,64 @@
+ARG CONDA=mamba
+ARG MINIFORGE_NAME=Mambaforge
+ARG MINIFORGE_VERSION=4.13.0-1
+ARG ROOT_CONTAINER=debian:bullseye-slim
+
+
+FROM ${ROOT_CONTAINER} as binaries
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+USER root
+WORKDIR /tmp
+ENV DEBIAN_FRONTEND noninteractive
+RUN \
+    apt-get -qq update --yes && \
+    apt-get -qq upgrade --yes && \
+    apt-get -qq install --yes --no-install-recommends \
+        build-essential \
+        bzip2 \
+        ca-certificates \
+        git \
+        lz4 \
+        nano-tiny \
+        tini \
+        vim-tiny \
+        wget \
+    > /dev/null && \
+    apt-get -qq clean && \
+    rm -rf /var/lib/apt/lists/*
+ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
+CMD /bin/bash
+
+
+FROM binaries as forge
+ARG CONDA
+ARG MINIFORGE_NAME
+ARG MINIFORGE_VERSION
+ENV CONDA_DIR=/opt/conda
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH=${CONDA_DIR}/bin:${PATH}
+COPY ./jupyterlab/environment.yml .
+RUN \
+    wget --no-hsts -q https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/${MINIFORGE_NAME}-${MINIFORGE_VERSION}-Linux-$(uname -m).sh -O forge.sh && \
+    /bin/bash forge.sh -b -p ${CONDA_DIR} && \
+    rm forge.sh && \
+    ${CONDA} env update --name base --file environment.yml && \
+    rm environment.yml && \
+    ${CONDA} init && \
+    ${CONDA} clean --tarballs --index-cache --packages --yes && \
+    find ${CONDA_DIR} -follow -type f -name '*.a' -delete && \
+    find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete && \
+    ${CONDA} clean --force-pkgs-dirs --all --yes  && \
+    echo ". ${CONDA_DIR}/etc/profile.d/conda.sh && ${CONDA} activate base" >> /etc/skel/.bashrc && \
+    echo ". ${CONDA_DIR}/etc/profile.d/conda.sh && ${CONDA} activate base" >> ~/.bashrc
+
+
+FROM forge as jupyterlab
+LABEL name="jupyterlab"
+RUN \
+    mkdir -p ~/.jupyter && \
+    echo "c.ServerApp.token = ''" > ~/.jupyter/jupyter_notebook_config.py && \
+    mkdir -p ~/.jupyter/custom && \
+    echo -e ".container { width:99% !important; }\nelement.style { max-width: 99% !important; }" > ~/.jupyter/custom/custom.css && \
+    mkdir -p ~/.jupyter/lab/user-settings/@jupyterlab/apputils-extension && \
+    echo '{ "theme": "JupyterLab Dark" }' > ~/.jupyter/lab/user-settings/@jupyterlab/apputils-extension/themes.jupyterlab-settings
+CMD jupyter retro --ip=0.0.0.0 --allow-root --no-browser --notebook-dir /tmp
