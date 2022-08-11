@@ -24,12 +24,12 @@ dependencies:
     - jupyterlab-pullrequests
     - libpq
     - lz4
-    - matplotlib>=3.5.1
+    - matplotlib
     - nb_conda_kernels
-    - numpy>=1.22.0
+    - numpy
     - numexpr
     - nodejs
-    - pandas>=1.3.5
+    - pandas
     - pip>=22.0.4
     - pip:
       - sh
