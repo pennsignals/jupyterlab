@@ -1,0 +1,10 @@
+!mssql
+  database: ${MSSQL_DATABASE}
+  host: ${MSSQL_HOST}
+  password: ${MSSQL_PASSWORD}
+  port: ${MSSQL_PORT}
+  schema: test
+  sql: !asset
+    path: /tmp/sql/mssql
+    ext: .sql
+  username: ${MSSQL_USERNAME}

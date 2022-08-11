@@ -33,7 +33,7 @@ dependencies:
     - pip>=22.0.4
     - pip:
       - sh
-      - dsdk>=1.6.0
+      - dsdk>=1.7.0
       - jupyterlab_skip_traceback
       - vega
       - vega_datasets

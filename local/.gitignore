@@ -1,2 +1,4 @@
 *
 !.gitignore
+!mssql.yaml
+!postgres.yaml
