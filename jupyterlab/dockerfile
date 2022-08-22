@@ -17,6 +17,7 @@ RUN \
         bzip2 \
         ca-certificates \
         git \
+        libpq-dev \
         lz4 \
         nano-tiny \
         tini \
@@ -36,6 +37,8 @@ ARG MINIFORGE_VERSION
 ENV CONDA_DIR=/opt/conda
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH=${CONDA_DIR}/bin:${PATH}
+ENV FREETDS /etc/freetds
+COPY ./freetds.conf /etc/freetds/
 COPY ./jupyterlab/environment.yml .
 RUN \
     wget --no-hsts -q https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/${MINIFORGE_NAME}-${MINIFORGE_VERSION}-Linux-$(uname -m).sh -O forge.sh && \
