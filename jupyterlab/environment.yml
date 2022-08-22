@@ -32,9 +32,9 @@ dependencies:
     - pandas
     - pip>=22.0.4
     - pip:
-      - sh
       - dsdk>=1.7.0
       - jupyterlab_skip_traceback
+      - sh
       - vega
       - vega_datasets
     - psycopg2
