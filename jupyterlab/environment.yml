@@ -7,7 +7,6 @@ dependencies:
     - altair_viewer
     - black[jupyterlab]
     - diff-match-patch
-    - freetds
     - hdf5
     - hdf5plugin
     - h5py
@@ -22,7 +21,6 @@ dependencies:
     - jupyterlab-git
     - jupyterlab-latex
     - jupyterlab-pullrequests
-    - libpq
     - lz4
     - matplotlib
     - nb_conda_kernels
@@ -47,5 +45,5 @@ dependencies:
     - scikit-learn
     - seaborn
     - pytables
-    - tornado
+    - tornado==6.1
     - wheel

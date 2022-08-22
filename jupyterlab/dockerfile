@@ -16,6 +16,7 @@ RUN \
         build-essential \
         bzip2 \
         ca-certificates \
+        freetds-dev \
         git \
         libpq-dev \
         lz4 \
